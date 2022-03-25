@@ -15,6 +15,9 @@ enum NetworkError: Error {
 
 class Webservice {
     
+    static let shared = Webservice()
+    private init() {}
+    
     func fetchSources(url: URL?) async throws -> [NewsSource] {
         guard let url = url else { return [] }
         let (data, _) = try await URLSession.shared.data(from: url)
@@ -22,7 +25,22 @@ class Webservice {
         return newsSourceResponse.sources
     }
     
-    func fetchNews(by sourceId: String, url: URL?, completion: @escaping (Result<[NewsArticle], NetworkError>) -> Void) {
+    
+    func fetchNewsAsync(by sourceId: String, url: URL?) async throws -> [NewsArticle] {
+        return try await withCheckedThrowingContinuation { continuation in
+            fetchNews(by: sourceId, url: url) { result in
+                switch result {
+                case let .success(newsArticle):
+                    continuation.resume(returning: newsArticle)
+                case let .failure(error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    // For practicing continuation, I'm pretending that the below function is being exposed by a third party SDK and I don't have access to modify it.
+    private func fetchNews(by sourceId: String, url: URL?, completion: @escaping (Result<[NewsArticle], NetworkError>) -> Void) {
         
         guard let url = url else {
             completion(.failure(.badUrl))

@@ -13,18 +13,14 @@ struct NewsListScreen: View {
     @StateObject private var newsArticleListViewModel = NewsArticleListViewModel()
     
     var body: some View {
-        
-        NavigationView {
-        
         List(newsArticleListViewModel.newsArticles, id: \.id) { newsArticle in
                 NewsArticleCell(newsArticle: newsArticle)
         }
         .listStyle(.plain)
-        .onAppear {
-            newsArticleListViewModel.getNewsBy(sourceId: newsSource.id)
-        }
+        .task({
+            await newsArticleListViewModel.getNewsBy(sourceId: newsSource.id)
+        })
         .navigationTitle(newsSource.name)
-        }
     }
 }
 

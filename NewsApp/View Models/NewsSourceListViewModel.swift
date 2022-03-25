@@ -14,7 +14,7 @@ class NewsSourceListViewModel: ObservableObject {
     
     func getSources() async {
         do {
-            let newsSources = try await Webservice().fetchSources(url: Constants.Urls.sources)
+            let newsSources = try await Webservice.shared.fetchSources(url: Constants.Urls.sources)
             self.newsSources = newsSources.map { NewsSourceViewModel(newsSource: $0) }
             
         } catch {
