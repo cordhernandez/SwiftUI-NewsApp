@@ -2,7 +2,7 @@
 //  NewsApp.swift
 //  NewsApp
 //
-//  Created by Mohammad Azam on 6/30/21.
+//  Created by Cordero Hernandez on 3/24/22.
 //
 
 import SwiftUI
